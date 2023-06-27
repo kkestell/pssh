@@ -1,61 +1,82 @@
-# Parallel SSH (`pssh`)
+# pssh
 
-`pssh` is a Go application that allows you to run commands on multiple servers in parallel. It allows for configuration of hosts, usernames, ports, key files, and optional terminal colors for output differentiation.
+Parallel SSH for running commands on multiple hosts simultaneously.
 
-## Installation
+## Description
 
-You can install the program with the provided Makefile. The `install` target builds the program and copies the executable to `~/.local/bin` and the configuration file to `~/.config/pssh/config.json`. Here are the steps:
+pssh is a C# program for executing a specified command on multiple SSH hosts in parallel. The command output and error messages are displayed on the console with a unique color for each host. The list of hosts, along with their configuration, is read from a JSON configuration file.
 
-1. Clone the repository: `git clone https://github.com/username/pssh.git`
-2. Change into the project directory: `cd pssh`
-3. Install the application: `make install`
+## Options
 
-Note: Make sure `~/.local/bin` is in your `$PATH` for easy usage.
+No command-line options are required. The command to execute on all hosts should be provided as command-line arguments.
 
-## Configuration
+## Environment Variables
 
-The program reads a configuration file in JSON format located at `~/.config/pssh/config.json`. This file holds information about the servers you want to run commands on.
+* `NO_COLOR`: If this environment variable is set, all output will be printed in white, ignoring the host-specific color settings.
+* `PSSH_CONFIG`: This environment variable can be set to the path of the configuration file. If not set, the configuration file at `~/.config/pssh/config.json` is used.
 
-Here is an example configuration file:
+## Configuration File
+
+The configuration file is a JSON file that specifies the list of hosts to connect to. Each host has the following properties:
+
+* `Address` (string, required): The IP address or hostname of the SSH server.
+* `Username` (string, optional): The username to use for the SSH connection. If not specified, the username of the current user is used.
+* `Port` (int, optional): The port to use for the SSH connection. If not specified, the default SSH port (22) is used.
+* `KeyFile` (string, optional): The path to the private key file to use for the SSH connection.
+* `Color` (string, optional): The console color to use for this host's output. If not specified, a default color will be used.
+
+The colors available are: Red, Green, Yellow, Blue, Magenta, Cyan, Gray, DarkRed, DarkGreen, DarkYellow, DarkBlue, DarkMagenta, and DarkCyan. 
+
+Example configuration file:
 
 ```json
 [
   {
-    "address": "10.0.0.2",
-    "username": "root",
-    "port": "22",
-    "key_file": "~/.ssh/id_rsa",
-    "color": "\033[0;31m"
+    "Address": "192.168.0.1",
+    "Username": "admin",
+    "Port": 22,
+    "KeyFile": "/path/to/keyfile",
+    "Color": "Red"
   },
   {
-    "address": "10.0.0.3",
-    "username": "user",
-    "port": "2222",
-    "key_file": "~/.ssh/id_rsa"
+    "Address": "192.168.0.2",
+    "Username": "root",
+    "Port": 2222,
+    "KeyFile": "/path/to/another/keyfile",
+    "Color": "Green"
   }
 ]
 ```
 
-## Usage
+## Examples
 
-To run a command on the servers defined in your configuration file, use the command:
+Run `ls` on all configured hosts:
 
-```bash
-pssh 'your-command-here'
+```
+pssh ls
 ```
 
-You can also pass multiple arguments with the `--` option:
+Run a command with spaces on all configured hosts:
 
-```bash
-pssh -- your command with multiple arguments
+```
+pssh "ls -l /var/log"
 ```
 
-For example, to list the contents of the `/var/www` directory, you would use:
+Use a custom configuration file:
 
-```bash
-pssh -- ls /var/www
+```
+PSSH_CONFIG=/path/to/config.json pssh uname -a
 ```
 
-## Troubleshooting
+Disable colors:
 
-If you encounter any issues with running commands that require `sudo`, remember that the `sudo` command may require interactive password input, which is not supported in this program. Consider configuring passwordless `sudo` on your servers for commands that need it.
+```
+NO_COLOR=1 pssh uptime
+```
+
+## Exit Status
+
+The `pssh` utility exits with one of the following values:
+
+* `0` - Command was successfully executed on all hosts.
+* `1` - An error occurred. Possible reasons include: no command provided, no hosts found in config file, or the config file does not exist.
