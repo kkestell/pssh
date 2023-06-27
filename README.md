@@ -19,11 +19,11 @@ No command-line options are required. The command to execute on all hosts should
 
 The configuration file is a JSON file that specifies the list of hosts to connect to. Each host has the following properties:
 
-* `Address` (string, required): The IP address or hostname of the SSH server.
-* `Username` (string, optional): The username to use for the SSH connection. If not specified, the username of the current user is used.
-* `Port` (int, optional): The port to use for the SSH connection. If not specified, the default SSH port (22) is used.
-* `KeyFile` (string, optional): The path to the private key file to use for the SSH connection.
-* `Color` (string, optional): The console color to use for this host's output. If not specified, a default color will be used.
+* `address` (string, required): The IP address or hostname of the SSH server.
+* `username` (string, optional): The username to use for the SSH connection. If not specified, the username of the current user is used.
+* `port` (int, optional): The port to use for the SSH connection. If not specified, the default SSH port (22) is used.
+* `key_file` (string, optional): The path to the private key file to use for the SSH connection.
+* `color` (string, optional): The console color to use for this host's output. If not specified, a default color will be used.
 
 The colors available are: Red, Green, Yellow, Blue, Magenta, Cyan, Gray, DarkRed, DarkGreen, DarkYellow, DarkBlue, DarkMagenta, and DarkCyan. 
 
@@ -32,18 +32,18 @@ Example configuration file:
 ```json
 [
   {
-    "Address": "192.168.0.1",
-    "Username": "admin",
-    "Port": 22,
-    "KeyFile": "/path/to/keyfile",
-    "Color": "Red"
+    "address": "192.168.0.1",
+    "username": "admin",
+    "port": 22,
+    "key_file": "/path/to/keyfile",
+    "color": "Red"
   },
   {
-    "Address": "192.168.0.2",
-    "Username": "root",
-    "Port": 2222,
-    "KeyFile": "/path/to/another/keyfile",
-    "Color": "Green"
+    "address": "192.168.0.2",
+    "username": "root",
+    "port": 2222,
+    "key_file": "/path/to/another/keyfile",
+    "color": "Green"
   }
 ]
 ```
